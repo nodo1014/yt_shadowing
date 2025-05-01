@@ -1,0 +1,97 @@
+# English Shadowing Automation System Configuration
+# Date: May 1, 2025
+
+repeat_count: 3
+subtitle_mode: [no_subtitle, en_ko, en_ko]
+subtitle_style:
+  font: Pretendard-Bold
+  fontsize: 48
+  position:
+    x: 50
+    y: 600
+  shadow: true
+  bgcolor: "#00000080"
+ai_model:
+  sentence_recommendation: deepseek
+  translation: chatgpt-3.5
+tts:
+  provider: edge-tts
+  voice: en-US-GuyNeural
+  speed: 1.0
+  pitch: 0
+
+# 새로운 기능 추가
+learning_mode:
+  difficulty_levels: true # 난이도별 학습 모드 활성화
+  levels:
+    - beginner: # 초보자용
+        repeat_count: 5
+        pause_duration: 2.0 # 문장 사이 더 긴 휴식
+        tts_speed: 0.8
+    - intermediate: # 중급자용
+        repeat_count: 3
+        pause_duration: 1.0
+        tts_speed: 1.0
+    - advanced: # 고급자용
+        repeat_count: 2
+        pause_duration: 0.5
+        tts_speed: 1.2
+
+focus_phrases:
+  enabled: true # 핵심 구문 하이라이트 기능
+  color: "#FFFF00" # 노란색 하이라이트
+  zoom: 1.2 # 확대 효과 (1.2배)
+  animation: true # 애니메이션 효과 활성화
+
+practice_format:
+  focus_message: [
+      "다시 집중!",
+      "기억나나요?",
+      "따라 말해보세요!",
+      "이제 해볼까요?",
+    ] # 랜덤하게 선택
+  countdown: true # 반복 전 카운트다운 표시
+  progress_bar: true # 진행 상태바 표시
+  clap_sfx: false # 성공 시 박수 효과음 (옵션)
+
+thumbnail:
+  template: professional
+  width: 1280
+  height: 720
+  background_color: "#1A2740"
+  text_color: "#FFFFFF"
+  highlight_color: "#3498db"
+  use_key_phrases: true # 핵심 구문을 썸네일에 표시
+
+merger:
+  intro:
+    enabled: true
+    duration: 3
+    template: fade_in
+  outro:
+    enabled: true
+    duration: 5
+    template: fade_out
+    call_to_action: true # 다음 영상 유도 메시지
+  transition:
+    type: fade
+    duration: 0.5
+
+pronunciation:
+  highlight_difficult: true # 발음하기 어려운 부분 강조
+  ipa_display: false # 국제 음성 기호 표시 (옵션)
+  common_mistakes:
+    show: true # 한국인이 틀리기 쉬운 발음 강조
+    focused_sounds: [r, l, f, v, th, z] # 집중 연습이 필요한 발음
+
+analytics:
+  tracking: false # 학습 진도 추적 (사용자 동의 시)
+  difficulty_analysis: true # 자동 난이도 분석
+  recommendation: true # 다음 학습 추천
+
+export:
+  formats: [mp4, audio_only] # 비디오 및 오디오 추출 옵션
+  quality_presets:
+    high: { video: "3M", audio: "192k" }
+    medium: { video: "1.5M", audio: "128k" }
+    low: { video: "800k", audio: "96k" }

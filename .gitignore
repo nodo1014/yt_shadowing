@@ -45,5 +45,13 @@ env/
 # Config files with sensitive information
 # config.yaml  # Uncomment if your config contains sensitive data
 
-# Extracted clips directory (optional)
-# extracted_clips/  # Uncomment if you don't want to include extracted clips
+# Extracted clips directory - don't track individual clips
+extracted_clips/*
+!extracted_clips/.gitkeep
+
+# Indexed database and JSON files
+*.db
+subtitle_index.json
+*_index.json
+
+지시서.md
