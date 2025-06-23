@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube 쉐도잉 API 테스트</title>
+    <style>
+        body {
+            font-family: 'Pretendard', 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        h1 {
+            color: #333;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        pre {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .loading {
+            display: none;
+            margin: 10px 0;
+            color: #666;
+        }
+        .section {
+            margin-bottom: 30px;
+            border: 1px solid #eee;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        .progress-bar {
+            width: 100%;
+            background-color: #f0f0f0;
+            height: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+        .progress {
+            width: 0%;
+            height: 100%;
+            background-color: #4CAF50;
+            transition: width 0.3s;
+        }
+    </style>
+</head>
+<body>
+    <h1>YouTube 쉐도잉 API 테스트</h1>
+    
+    <div class="section">
+        <h2>1. API 연결 테스트</h2>
+        <button id="testApiBtn">API 상태 확인</button>
+        <div class="loading" id="testApiLoading">요청 중...</div>
+        <pre id="testApiResult"></pre>
+    </div>
+
+    <div class="section">
+        <h2>2. YouTube 트랜스크립트 가져오기</h2>
+        <div class="form-group">
+            <label for="transcriptUrl">YouTube URL:</label>
+            <input type="text" id="transcriptUrl" value="https://www.youtube.com/watch?v=eIho2S0ZahI">
+        </div>
+        <div class="form-group">
+            <label for="language">언어 코드:</label>
+            <input type="text" id="language" value="en">
+        </div>
+        <button id="getTranscriptBtn">트랜스크립트 가져오기</button>
+        <div class="loading" id="transcriptLoading">트랜스크립트 가져오는 중...</div>
+        <pre id="transcriptResult"></pre>
+    </div>
+
+    <div class="section">
+        <h2>3. YouTube 영상 다운로드</h2>
+        <div class="form-group">
+            <label for="downloadUrl">YouTube URL:</label>
+            <input type="text" id="downloadUrl" value="https://www.youtube.com/watch?v=eIho2S0ZahI">
+        </div>
+        <div class="form-group">
+            <label for="outputDir">출력 디렉토리:</label>
+            <input type="text" id="outputDir" value="data/clips">
+        </div>
+        <button id="downloadBtn">영상 다운로드</button>
+        <div class="loading" id="downloadLoading">영상 다운로드 중... (최대 수 분 소요될 수 있습니다)</div>
+        <div id="downloadProgressContainer" style="display:none">
+            <div class="progress-bar">
+                <div class="progress" id="downloadProgress"></div>
+            </div>
+            <p id="downloadStatus">0% 완료</p>
+        </div>
+        <pre id="downloadResult"></pre>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:8001/api';
+
+        // API 연결 테스트
+        document.getElementById('testApiBtn').addEventListener('click', async () => {
+            const loadingEl = document.getElementById('testApiLoading');
+            const resultEl = document.getElementById('testApiResult');
+            
+            loadingEl.style.display = 'block';
+            resultEl.textContent = '';
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/youtube/test`);
+                const data = await response.json();
+                resultEl.textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                resultEl.textContent = `오류: ${error.message}`;
+            } finally {
+                loadingEl.style.display = 'none';
+            }
+        });
+
+        // 트랜스크립트 가져오기
+        document.getElementById('getTranscriptBtn').addEventListener('click', async () => {
+            const loadingEl = document.getElementById('transcriptLoading');
+            const resultEl = document.getElementById('transcriptResult');
+            const url = document.getElementById('transcriptUrl').value;
+            const language = document.getElementById('language').value;
+            
+            if (!url) {
+                alert('YouTube URL을 입력하세요');
+                return;
+            }
+            
+            loadingEl.style.display = 'block';
+            resultEl.textContent = '';
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/youtube/transcript`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ url, language })
+                });
+                
+                const data = await response.json();
+                
+                if (data.status === 'error') {
+                    resultEl.textContent = `오류: ${data.message}`;
+                } else {
+                    resultEl.textContent = JSON.stringify(data, null, 2);
+                }
+            } catch (error) {
+                resultEl.textContent = `오류: ${error.message}`;
+            } finally {
+                loadingEl.style.display = 'none';
+            }
+        });
+
+        // 영상 다운로드
+        document.getElementById('downloadBtn').addEventListener('click', async () => {
+            const loadingEl = document.getElementById('downloadLoading');
+            const resultEl = document.getElementById('downloadResult');
+            const progressContainer = document.getElementById('downloadProgressContainer');
+            const progressBar = document.getElementById('downloadProgress');
+            const statusEl = document.getElementById('downloadStatus');
+            const url = document.getElementById('downloadUrl').value;
+            const output_dir = document.getElementById('outputDir').value;
+            
+            if (!url) {
+                alert('YouTube URL을 입력하세요');
+                return;
+            }
+            
+            loadingEl.style.display = 'block';
+            progressContainer.style.display = 'block';
+            resultEl.textContent = '';
+            progressBar.style.width = '0%';
+            statusEl.textContent = '0% 완료';
+            
+            try {
+                // 다운로드 요청
+                const response = await fetch(`${API_BASE_URL}/youtube/download`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ url, output_dir })
+                });
+                
+                const data = await response.json();
+                
+                if (data.status === 'error') {
+                    resultEl.textContent = `오류: ${data.message}`;
+                } else {
+                    // 성공적으로 다운로드 요청을 시작했으므로 진행 상태 애니메이션
+                    let progress = 0;
+                    const interval = setInterval(() => {
+                        progress += 1;
+                        progressBar.style.width = `${progress}%`;
+                        statusEl.textContent = `${progress}% 완료`;
+                        
+                        if (progress >= 100) {
+                            clearInterval(interval);
+                            loadingEl.style.display = 'none';
+                        }
+                    }, 500);
+                    
+                    resultEl.textContent = JSON.stringify(data, null, 2);
+                }
+            } catch (error) {
+                resultEl.textContent = `오류: ${error.message}`;
+                loadingEl.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html> 

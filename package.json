@@ -1,0 +1,23 @@
+{
+  "name": "youtube-shadowing",
+  "version": "1.0.0",
+  "description": "YouTube 쉐도잉 시스템 - 모노레포",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
+  "scripts": {
+    "frontend": "cd frontend && npm run dev",
+    "backend": "cd backend && npm run dev",
+    "dev": "concurrently \"npm run frontend\" \"npm run backend\"",
+    "build": "cd frontend && npm run build"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.1.5",
+    "concurrently": "^8.2.2"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}

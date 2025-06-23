@@ -1,0 +1,2 @@
+file 'data/temp/thumbnail_video_1746219951.mp4'
+file 'data/clips/cortisol_repeat_test.mp4'

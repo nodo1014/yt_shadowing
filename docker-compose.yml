@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    volumes:
+      - ./backend/data:/app/data
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+    environment:
+      - APP_NAME=영어 쉐도잉 시스템
+      - APP_VERSION=0.3.0
+      - DEBUG=False
+      - API_HOST=0.0.0.0
+      - API_PORT=8000
+      - API_RELOAD=False
+      - DATA_DIR=data
+    networks:
+      - app-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+    depends_on:
+      - backend
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_API_URL=http://backend:8000
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge 

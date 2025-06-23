@@ -1,0 +1,35 @@
+{
+  "name": "youtube-shadowing-frontend",
+  "version": "1.0.0",
+  "description": "YouTube 쉐도잉 시스템 프론트엔드",
+  "scripts": {
+    "start": "next start",
+    "dev": "next dev",
+    "build": "next build"
+  },
+  "dependencies": {
+    "axios": "^1.6.5",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "morgan": "^1.10.0",
+    "next": "^15.3.1",
+    "picocolors": "^1.1.1",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-hot-toast": "^2.5.2"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.1.5",
+    "@types/node": "^22.15.3",
+    "@types/react": "^19.1.2",
+    "autoprefixer": "^10.4.21",
+    "nodemon": "^3.1.10",
+    "postcss": "^8.5.3",
+    "tailwindcss": "^4.1.5",
+    "typescript": "^5.8.3"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
